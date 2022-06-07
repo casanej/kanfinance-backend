@@ -9,6 +9,7 @@
     "start:dev": "ts-node src/index.ts"
   },
   "dependencies": {
+    "dotenv": "^16.0.1",
     "fastify": "^3.29.0"
   },
   "devDependencies": {
