@@ -1,21 +1,24 @@
-import Fastify from "fastify";
+import fastify from 'fastify'
 import dotenv from 'dotenv';
+import { appRoutes } from './routes';
+import { prismaPlugin } from './plugins';
 
 dotenv.config();
 
 const PORT = process.env.PORT || '8080';
 
-const fastify = Fastify({
+const server = fastify({
     logger: true
 })
 
-fastify.get('/', function (request, reply) {
-    reply.send({ hello: 'world' })
-})
+server.register(prismaPlugin)
+server.register(appRoutes, { prefix: '/web' })
 
-fastify.listen(PORT, function (err, address) {
+server.listen(PORT, function (err, address) {
     if (err) {
-      fastify.log.error(err)
-      process.exit(1)
+        server.log.error(err)
+        process.exit(1)
+    } else {
+        console.log(`[SERVER INFO] Server is listening on ${address}`);
     }
 })
