@@ -4,9 +4,10 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsc --outDir dist",
+    "build": "tsc --outDir dist && node scripts/prepare.js",
     "start": "node dist/index.js",
-    "start:dev": "nodemon ./src/index.ts --ignore dist --exec \"yarn build && yarn start\""
+    "start:dev": "nodemon ./src/index.ts --ignore dist --exec \"yarn build && yarn start\"",
+    "prisma:migrate": "prisma migrate dev --name "
   },
   "dependencies": {
     "@prisma/client": "^3.15.0",
