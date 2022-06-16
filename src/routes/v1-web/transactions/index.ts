@@ -1,4 +1,4 @@
-import { createTransactions, getCategoryById, getTransactionById } from "controllers";
+import { createTransactions, getCategoryById, getTransactionById, getTransactions } from "controllers";
 import { FastifyInstance } from "fastify"
 import { checkUserExists } from "helpers";
 import { TransactionDtoReqParams } from "models";
@@ -15,12 +15,25 @@ import { TransactionDtoReqParams } from "models";
 
 export const transactionRoutes = (instance: FastifyInstance, _: any, next: any) => {
 
+    instance.get<{ Params: { id: string } }>('/', {
+        handler: async (request, reply) => {
+            const id = parseInt(request.params.id);
+            if (id <= 0) return reply.code(400).send({ success: false, message: 'Invalid id', code: 'transaction.invalid-id' });
+
+            const transaction = await getTransactions(instance.prisma, instance.user.id);
+
+            if (transaction) return reply.code(200).send({ success: true, data: transaction });
+
+            return reply.code(404).send({ success: false, message: 'Transaction not found', code: 'transaction.not-found' });
+        }
+    })
+
     instance.get<{ Params: { id: string } }>('/:id', {
         handler: async (request, reply) => {
             const id = parseInt(request.params.id);
             if (id <= 0) return reply.code(400).send({ success: false, message: 'Invalid id', code: 'transaction.invalid-id' });
 
-            const transaction = await getTransactionById(instance.prisma, id);
+            const transaction = await getTransactionById(instance.prisma, id, instance.user.id);
 
             if (transaction) return reply.code(200).send({ success: true, data: transaction });
 

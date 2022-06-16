@@ -1,10 +1,28 @@
 import { PrismaClient } from "@prisma/client";
 import { TransactionDtoReqParams } from "models";
 
-export const getTransactionById = async (prisma: PrismaClient, id: number) => {
-    const transaction = await prisma.transactions.findUnique({
+export const getTransactions = async (prisma: PrismaClient, userId: number) => {
+    const transaction = await prisma.transactions.findMany({
         where: {
-            id
+            userId
+        },
+        orderBy: {
+            createdDate: 'desc'
+        },
+        include: {
+            category: true,
+            objective: true
+        }
+    });
+
+    return transaction;
+}
+
+export const getTransactionById = async (prisma: PrismaClient, id: number, userId: number) => {
+    const transaction = await prisma.transactions.findFirst({
+        where: {
+            id,
+            userId
         }
     });
 
